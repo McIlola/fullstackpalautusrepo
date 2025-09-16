@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -10,3 +11,4 @@ sequenceDiagram
     deactivate server
 
     Note right of browser: Browser updates notes list dynamically using JavaScript<br/>No full page reload happens
+```
