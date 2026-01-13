@@ -1,0 +1,54 @@
+const mongoose = require('mongoose');
+
+if (process.argv.length < 3) {
+  console.log('give password as argument')
+  process.exit(1)
+}
+
+require('dotenv').config();
+const password = process.env.MONGODB_PASSWORD;
+
+const url = `mongodb+srv://ilolamatte_db_user:${password}@phonebookfso.3gfavkh.mongodb.net/?appName=phonebookfso`;
+
+mongoose.set('strictQuery', false);
+
+mongoose.connect(url);
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+});
+
+const Person = mongoose.model('Person', personSchema);
+
+if (process.argv.length === 3) {
+  Person.find({}).then(result => {
+    console.log('phonebook:');
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number}`);
+    });
+    mongoose.connection.close();
+  });
+}
+
+else if (process.argv.length === 5) {
+  const name = process.argv[3];
+  const number = process.argv[4];
+
+  const person = new Person({
+    name: name,
+    number: number,
+  });
+
+  person.save().then(() => {
+    console.log(`added ${name} number ${number} to phonebook`);
+    mongoose.connection.close();
+  });
+}
+
+else {
+  console.log('Usage:');
+  console.log('  node mongo.js <password>           # list all');
+  console.log('  node mongo.js <password> <name> <number>  # add new entry');
+  mongoose.connection.close();
+}
